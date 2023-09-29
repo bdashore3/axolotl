@@ -361,6 +361,14 @@ class ShareGPTPromptTokenizingStrategy(PromptTokenizingStrategy):
         conversation: Conversation = (
             self.prompter._conversation  # pylint: disable=protected-access
         )
+
+        # Set custom roles if provided. If one is missing, use the default roles.
+        if "roles" in prompt:
+            conversation.roles = (
+                prompt["roles"][0] if 0 < len(prompt["roles"]) else "USER",
+                prompt["roles"][1] if 1 < len(prompt["roles"]) else "ASSISTANT"
+            )
+
         try:
             for _, part in enumerate(
                 self.prompter.build_prompt(self.get_conversation_thread(prompt))
